@@ -1,0 +1,48 @@
+# Datadog Agent with Datadog Cluster Agent and
+# OrchestratorExplorer (Live Containers), Check Runners, and
+# External Metrics Server enabled
+
+targetSystem: "linux"
+datadog:
+  apiKey: 983ba66c97f5519f300c67f2119d2cff
+  clusterName: shoppingmall.lgu
+  tags: []
+  orchestratorExplorer:
+    enabled: true
+  logs:
+    enabled: true
+    containerCollectAll: true
+  networkMonitoring:
+    enabled: true
+  processAgent:
+    enabled: true
+    processCollection: true
+clusterAgent:
+  replicas: 1
+  rbac:
+    create: true
+    serviceAccountName: default
+  metricsProvider:
+    enabled: true
+    createReaderRbac: true
+    useDatadogMetrics: true
+    service:
+      type: ClusterIP
+      port: 8443
+agents:
+  rbac:
+    create: true
+    serviceAccountName: default
+  containers:
+    processAgent:
+       env:
+       - name: DD_SCRUB_ARGS 
+         value: "true"
+       - name: DD_CUSTOM_SENSITIVE_WORDS
+         value: "personal_key,*token,*token,sql*,*pass*d*" 
+clusterChecksRunner:
+  enabled: true
+  rbac:
+    create: true
+    serviceAccountName: default
+  replicas: 1
